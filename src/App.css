@@ -7,6 +7,18 @@
   pointer-events: none;
 }
 
+.App-input {
+  margin: auto;
+  max-width: 95%;
+  border-style: dashed;
+  text-align: center;
+  padding: 15px 0;
+}
+
+.App-line {
+  border-bottom: deeppink;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -15,7 +27,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  max-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
