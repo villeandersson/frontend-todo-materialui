@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./App.css";
 import { AgGridReact } from "ag-grid-react";
 
@@ -8,10 +8,36 @@ import "ag-grid-community/dist/styles/ag-theme-material.css";
 function App() {
   const [todo, setTodo] = useState({ kuvaus: "", pvm: "", tarkeys: "" });
   const [todos, setTodos] = useState([]);
+
+  const gridRef = useRef();
+
   const columns = [
-    { headerName: "Description", field: "kuvaus" },
-    { headerName: "Date", field: "pvm" },
-    { headerName: "Priority", field: "tarkeys" },
+    {
+      flex: 1,
+      headerName: "Description",
+      field: "kuvaus",
+      sortable: true,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      flex: 1,
+      headerName: "Date",
+      field: "pvm",
+      sortable: true,
+      filter: true,
+      floatingFilter: true,
+    },
+    {
+      flex: 1,
+      headerName: "Priority",
+      field: "tarkeys",
+      sortable: true,
+      filter: true,
+      floatingFilter: true,
+      cellStyle: (params) =>
+        params.value === "High" ? { color: "red" } : { color: "black" },
+    },
   ];
 
   const inputChanged = (event) => {
@@ -21,6 +47,19 @@ function App() {
   const addTodo = (event) => {
     event.preventDefault();
     setTodos([...todos, todo]);
+  };
+
+  const deleteTodo = () => {
+    if (gridRef.current.getSelectedNodes().length > 0) {
+      setTodos(
+        todos.filter(
+          (todo, index) =>
+            index !== gridRef.current.getSelectedNodes()[0].childIndex
+        )
+      );
+    } else {
+      alert("Select row first");
+    }
   };
 
   return (
@@ -51,6 +90,7 @@ function App() {
           onChange={inputChanged}
         />
         <button onClick={addTodo}>Add</button>
+        <button onClick={deleteTodo}>Delete</button>
       </div>
       <div
         className="ag-theme-material"
@@ -60,7 +100,14 @@ function App() {
           margin: "auto",
         }}
       >
-        <AgGridReact columnDefs={columns} rowData={todos}></AgGridReact>
+        <AgGridReact
+          ref={gridRef}
+          onGridReady={(params) => (gridRef.current = params.api)}
+          rowSelection="single"
+          columnDefs={columns}
+          rowData={todos}
+          animateRows="true"
+        ></AgGridReact>
       </div>
     </div>
   );
